@@ -7,7 +7,10 @@ load_dotenv()  # Load environment variables from .env file
 
 app = Flask(__name__)
 
-API_KEY = os.getenv("API_KEY", "020620cbefcece7fbd238337f8543d78")  # Use environment variable, fallback to existing key
+# Get API key from environment variable
+API_KEY = os.getenv("API_KEY")
+if not API_KEY:
+    raise ValueError("No API_KEY environment variable set. Please set it in Vercel dashboard.")
 
 # Map weather conditions to background colors
 weather_bg_colors = {
@@ -47,11 +50,15 @@ def index():
                     }
                 else:
                     weather = {"error": f"City '{city}' not found."}
-            except requests.exceptions.RequestException:
-                weather = {"error": "Network error occurred. Please try again."}
+            except requests.exceptions.RequestException as e:
+                weather = {"error": f"Network error occurred: {str(e)}"}
+            except Exception as e:
+                weather = {"error": f"An unexpected error occurred: {str(e)}"}
 
     return render_template("index.html", weather=weather, bg_color=bg_color)
 
+# Vercel requires the app to be named 'app'
+app.debug = False
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=int(os.getenv('PORT', 5000)))
