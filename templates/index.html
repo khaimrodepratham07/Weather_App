@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Weather App</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="{{ bg_color }}">
+    <div class="container">
+        <h1>🌤️ Weather Forecast</h1>
+        <form method="POST">
+            <input type="text" name="city" placeholder="Enter city name" required>
+            <button type="submit">Get Weather</button>
+        </form>
+
+        {% if weather %}
+            {% if weather.error %}
+                <div class="error">{{ weather.error }}</div>
+            {% else %}
+                <div class="weather-overview">
+                    <h2>{{ weather.city }}</h2>
+                    <div class="cards">
+                        <div class="card">
+                            <img src="https://openweathermap.org/img/wn/{{ weather.icon }}@4x.png" alt="Weather Icon">
+                            <h3>{{ weather.description }}</h3>
+                            <p><strong>{{ weather.temperature }}°C</strong></p>
+                        </div>
+                        <div class="card">
+                            <img src="https://cdn-icons-png.flaticon.com/512/728/728093.png" alt="Humidity">
+                            <h3>Humidity</h3>
+                            <p>{{ weather.humidity }}%</p>
+                        </div>
+                        <div class="card">
+                            <img src="https://cdn-icons-png.flaticon.com/512/1113/1113965.png" alt="Wind">
+                            <h3>Wind Speed</h3>
+                            <p>{{ weather.wind }} m/s</p>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        {% endif %}
+    </div>
+</body>
+</html>
